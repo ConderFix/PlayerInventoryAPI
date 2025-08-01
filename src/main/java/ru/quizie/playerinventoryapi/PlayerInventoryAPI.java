@@ -1,11 +1,12 @@
 package ru.quizie.playerinventoryapi;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class PlayerInventoryAPI {
+import java.util.Objects;
+
+public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
 
     /**
      * Проверяет, содержит ли инвентарь указанное количество материала
@@ -15,8 +16,11 @@ public class PlayerInventoryAPI {
      * @param amount Количество материала
      * @return true, если в инвентаре есть указанное количество материала, иначе false
      */
-    public static boolean hasMaterial(PlayerInventory inventory, Material material, int amount) {
-        if (amount <= 0 || inventory == null) return false;
+    @Override
+    public boolean hasMaterial(PlayerInventory inventory, Material material, int amount) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(material, "Material cannot be null");
+        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
 
         final ItemStack[] contents = inventory.getContents();
         int amountStack = 0;
@@ -40,7 +44,10 @@ public class PlayerInventoryAPI {
      * @param material Материал для поиска
      * @return true, если в инвентаре есть предмет с указанным материалом, иначе false
      */
-    public static boolean hasMaterial(PlayerInventory inventory, Material material) {
+    @Override
+    public boolean hasMaterial(PlayerInventory inventory, Material material) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(material, "Material cannot be null");
         return inventory.contains(material);
     }
 
@@ -52,8 +59,11 @@ public class PlayerInventoryAPI {
      * @param amount Количество предмета
      * @return true, если в инвентаре есть указанное количество аналогичных предметов, иначе false
      */
-    public static boolean hasItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
-        if (amount <= 0) return false;
+    @Override
+    public boolean hasItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(stack, "ItemStack cannot be null");
+        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
 
         final ItemStack[] contents = inventory.getContents();
         int amountStack = 0;
@@ -77,7 +87,10 @@ public class PlayerInventoryAPI {
      * @param stack Предмет, который надо проверить
      * @return true, если в инвентаре есть аналогичный предмет, иначе false
      */
-    public static boolean hasItemStack(PlayerInventory inventory, ItemStack stack) {
+    @Override
+    public boolean hasItemStack(PlayerInventory inventory, ItemStack stack) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(stack, "ItemStack cannot be null");
         return inventory.contains(stack);
     }
 
@@ -88,8 +101,11 @@ public class PlayerInventoryAPI {
      * @param material Удаляемый материал
      * @param amount Количество удаляемого предмета
      */
-    public static void removeMaterial(PlayerInventory inventory, Material material, int amount) {
-        if (amount <= 0) return;
+    @Override
+    public void removeMaterial(PlayerInventory inventory, Material material, int amount) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(material, "Material cannot be null");
+        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
 
         for (ItemStack item : inventory.getContents()) {
             if (isItemValid(item) && item.getType() == material) {
@@ -112,7 +128,11 @@ public class PlayerInventoryAPI {
      * @param stack Удаляемый предмет
      * @param amount Количество удаляемого предмета
      */
-    public static void removeItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
+    @Override
+    public void removeItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null");
+        Objects.requireNonNull(stack, "ItemStack cannot be null");
+        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
         for (ItemStack item : inventory.getContents()) {
             if (isItemValid(item) && item.isSimilar(stack)) {
                 final int stackAmount = item.getAmount();
