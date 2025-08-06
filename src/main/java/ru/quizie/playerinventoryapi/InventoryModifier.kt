@@ -11,5 +11,6 @@ interface InventoryModifier {
     fun removeMaterial(inventory: PlayerInventory?, material: Material?, amount: Int)
     fun removeItemStack(inventory: PlayerInventory?, stack: ItemStack?, amount: Int)
     fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>, amount: Int)
+    fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>)
     fun addSafeItemStack(player: Player, item: ItemStack?)
 }

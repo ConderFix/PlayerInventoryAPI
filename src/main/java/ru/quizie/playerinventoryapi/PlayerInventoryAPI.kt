@@ -200,6 +200,16 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         }
     }
 
+    /**
+     * Сканирует весь инвентарь и удаляет предмет с указанным NamespacedKey N-раз
+     *
+     * @param inventory Инвентарь игрока
+     * @param key NamespacedKey
+     * @param persistentDataType PersistentDataType
+     * @param amount N-раз
+     * @return true, если в инвентаре есть аналогичный предмет, иначе false
+     */
+
     override fun <T, Z> removeItemNamespacedKey(
         inventory: PlayerInventory?,
         key: NamespacedKey,
@@ -229,6 +239,34 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
             }
         }
     }
+
+    /**
+     * Сканирует весь инвентарь и удаляет ВСЕ предметы с указанным NamespacedKey
+     *
+     * @param inventory Инвентарь игрока
+     * @param key NamespacedKey
+     * @param persistentDataType PersistentDataType
+     * @return true, если в инвентаре есть аналогичный предмет, иначе false
+     */
+
+    override fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(key, "NamespacedKey cannot be null")
+        Objects.requireNonNull(persistentDataType, "NamespacedKey cannot be null")
+
+        for (item in inventory!!.contents) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+                item.amount = 0
+            }
+        }
+    }
+
+    /**
+     * Добавляет безопасно предмет в инвентарь игрока. Если у игрока будет заполнен инвентарь, то предмет выпадет на пол.
+     *
+     * @param player Игрок
+     * @param item Предмет, который нужно безопасно выдать
+     */
 
     override fun addSafeItemStack(player: Player, item: ItemStack?) {
         Objects.requireNonNull(item, "ItemStack cannot be null")
