@@ -94,7 +94,12 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         return inventory!!.contains(stack)
     }
 
-    override fun <T, Z> hasItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>, amount: Int): Boolean {
+    override fun <T, Z> hasItemNamespacedKey(
+        inventory: PlayerInventory?,
+        key: NamespacedKey,
+        persistentDataType: PersistentDataType<T, Z>,
+        amount: Int
+    ): Boolean {
         Objects.requireNonNull(inventory, "Inventory cannot be null")
         Objects.requireNonNull(key, "NamespacedKey cannot be null")
         require(amount > 0) { "Amount cannot be less than 0" }
@@ -103,7 +108,11 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         var amountStack = 0
 
         for (item in contents) {
-            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(
+                    key,
+                    persistentDataType
+                )
+            ) {
                 amountStack += item.amount
                 if (amountStack >= amount) {
                     return true
@@ -114,14 +123,22 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         return false
     }
 
-    override fun <T, Z> hasItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>): Boolean {
+    override fun <T, Z> hasItemNamespacedKey(
+        inventory: PlayerInventory?,
+        key: NamespacedKey,
+        persistentDataType: PersistentDataType<T, Z>
+    ): Boolean {
         Objects.requireNonNull(inventory, "Inventory cannot be null")
         Objects.requireNonNull(key, "NamespacedKey cannot be null")
 
         val contents = inventory!!.contents
 
         for (item in contents) {
-            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(
+                    key,
+                    persistentDataType
+                )
+            ) {
                 return true
             }
         }
@@ -183,7 +200,12 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         }
     }
 
-    override fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>, amount: Int) {
+    override fun <T, Z> removeItemNamespacedKey(
+        inventory: PlayerInventory?,
+        key: NamespacedKey,
+        persistentDataType: PersistentDataType<T, Z>,
+        amount: Int
+    ) {
         var amount = amount
         Objects.requireNonNull(inventory, "Inventory cannot be null")
         Objects.requireNonNull(key, "NamespacedKey cannot be null")
@@ -191,7 +213,11 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         require(amount > 0) { "Amount cannot be less than 0" }
 
         for (item in inventory!!.contents) {
-            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(
+                    key,
+                    persistentDataType
+                )
+            ) {
                 val stackAmount = item.amount
 
                 if (stackAmount >= amount) {
@@ -207,7 +233,8 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
     override fun addSafeItemStack(player: Player, item: ItemStack?) {
         Objects.requireNonNull(item, "ItemStack cannot be null")
 
-        player.inventory.addItem(item!!).forEach { slot: Int, itemStack: ItemStack -> player.world.dropItem(player.location, itemStack) }
+        player.inventory.addItem(item!!)
+            .forEach { slot: Int, itemStack: ItemStack -> player.world.dropItem(player.location, itemStack) }
     }
 
 

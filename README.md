@@ -42,7 +42,7 @@ Maven:
     <dependency>
         <groupId>com.github.ConderFix</groupId>
         <artifactId>PlayerInventoryAPI</artifactId>
-        <version>25fe098b</version>
+        <version>fbf37a67</version>
     </dependency>
 </dependencies>
 ```
@@ -57,16 +57,23 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.ConderFix:PlayerInventoryAPI:25fe098b'
+    implementation 'com.github.ConderFix:PlayerInventoryAPI:fbf37a67'
 }
 
 shadowJar {
+    archiveClassifier.set('')
     // Замените 'com.yourpackage' на пакет вашего пакета!!!
     relocate 'com.github.ConderFix.PlayerInventoryAPI', 'com.yourpackage.playerinventoryapi'
+}
+
+tasks.build {
+    dependsOn (shadowJar)
 }
 ```
 # Использование
 Главный класс: PlayerInventoryAPI. Создайте экземпляр класса и используйте методы класса. Пример использования:
+
+Java:
 ```java
 final PlayerInventory playerInventory = ...;
 final PlayerInventoryAPI playerInventoryAPI = ...;
@@ -78,4 +85,19 @@ if (playerInventoryAPI.hasMaterial(playerInventory, Material.EMERALD, 20)) {
     player.sendMessage("У тебя недостаточно изумрудов!");
 }
 ```
+
+Kotlin:
+```kotlin
+val inventory: PlayerInventory = ...
+val api: PlayerInventoryAPI = ...
+
+if (api.hasMaterial(inventory, Material.EMERALD, 20)) {
+    api.removeMaterial(inventory, Material.EMERALD, 20)
+    player.sendMessage("С твоего инвенатаря забралось 20 изумрудов")
+} else {
+    player.sendMessage("У тебя недостаточно изумрудов!")
+}
+```
+
+
 Этот код проверяет, что если в PlayerInventory (в инвентаре игрока) есть 20 изумрудов, то они пропадают.
