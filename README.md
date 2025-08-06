@@ -42,7 +42,7 @@ Maven:
     <dependency>
         <groupId>com.github.ConderFix</groupId>
         <artifactId>PlayerInventoryAPI</artifactId>
-        <version>3e12ed26</version>
+        <version>fbf37a67</version>
     </dependency>
 </dependencies>
 ```
@@ -57,7 +57,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.ConderFix:PlayerInventoryAPI:3e12ed26'
+    implementation 'com.github.ConderFix:PlayerInventoryAPI:fbf37a67'
 }
 
 shadowJar {
