@@ -211,7 +211,7 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
 
         for (item in inventory!!.contents) {
             if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
-                inventory.remove(item)
+                item.amount = 0
             }
         }
 
