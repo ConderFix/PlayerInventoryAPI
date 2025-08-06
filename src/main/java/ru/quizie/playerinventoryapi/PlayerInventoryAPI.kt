@@ -94,6 +94,16 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         return inventory!!.contains(stack)
     }
 
+    /**
+     * Проверяет, содержит ли инвентарь с указанным NamespacedKey в количестве N
+     *
+     * @param inventory Инвентарь игрока
+     * @param key NamespacedKey
+     * @param PersistentDataType
+     * @param amount N
+     * @return true, если в инвентаре есть предмет с указанным NamespacedKey в количестве N, иначе false
+     */
+
     override fun <T, Z> hasItemNamespacedKey(
         inventory: PlayerInventory?,
         key: NamespacedKey,
@@ -122,6 +132,15 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
 
         return false
     }
+
+    /**
+     * Проверяет, содержит ли инвентарь хотя бы один предмет с указанным NamespacedKey
+     *
+     * @param inventory Инвентарь игрока
+     * @param key NamespacedKey
+     * @param PersistentDataType
+     * @return true, если в инвентаре есть предмет с указанным NamespacedKey, иначе false
+     */
 
     override fun <T, Z> hasItemNamespacedKey(
         inventory: PlayerInventory?,
