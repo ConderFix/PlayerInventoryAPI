@@ -1,12 +1,14 @@
-package ru.quizie.playerinventoryapi;
+package ru.quizie.playerinventoryapi
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
+import org.bukkit.persistence.PersistentDataType
+import java.util.*
 
-import java.util.Objects;
-
-public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
+class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
 
     /**
      * Проверяет, содержит ли инвентарь указанное количество материала
@@ -16,25 +18,24 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param amount Количество материала
      * @return true, если в инвентаре есть указанное количество материала, иначе false
      */
-    @Override
-    public boolean hasMaterial(PlayerInventory inventory, Material material, int amount) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(material, "Material cannot be null");
-        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
+    override fun hasMaterial(inventory: PlayerInventory?, material: Material?, amount: Int): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(material, "Material cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
 
-        final ItemStack[] contents = inventory.getContents();
-        int amountStack = 0;
+        val contents = inventory!!.contents
+        var amountStack = 0
 
-        for (ItemStack item : contents) {
-            if (isItemValid(item) && item.getType() == material) {
-                amountStack += item.getAmount();
+        for (item in contents) {
+            if (isItemValid(item) && item!!.type == material) {
+                amountStack += item.amount
                 if (amountStack >= amount) {
-                    return true;
+                    return true
                 }
             }
         }
 
-        return false;
+        return false
     }
 
     /**
@@ -44,11 +45,11 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param material Материал для поиска
      * @return true, если в инвентаре есть предмет с указанным материалом, иначе false
      */
-    @Override
-    public boolean hasMaterial(PlayerInventory inventory, Material material) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(material, "Material cannot be null");
-        return inventory.contains(material);
+    override fun hasMaterial(inventory: PlayerInventory?, material: Material?): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(material, "Material cannot be null")
+
+        return inventory!!.contains(material!!)
     }
 
     /**
@@ -59,25 +60,24 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param amount Количество предмета
      * @return true, если в инвентаре есть указанное количество аналогичных предметов, иначе false
      */
-    @Override
-    public boolean hasItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(stack, "ItemStack cannot be null");
-        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
+    override fun hasItemStack(inventory: PlayerInventory?, stack: ItemStack?, amount: Int): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(stack, "ItemStack cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
 
-        final ItemStack[] contents = inventory.getContents();
-        int amountStack = 0;
+        val contents = inventory!!.contents
+        var amountStack = 0
 
-        for (ItemStack item : contents) {
-            if (isItemValid(item) && item.isSimilar(stack)) {
-                amountStack += item.getAmount();
+        for (item in contents) {
+            if (isItemValid(item) && item!!.isSimilar(stack)) {
+                amountStack += item.amount
                 if (amountStack >= amount) {
-                    return true;
+                    return true
                 }
             }
         }
 
-        return false;
+        return false
     }
 
     /**
@@ -87,11 +87,46 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param stack Предмет, который надо проверить
      * @return true, если в инвентаре есть аналогичный предмет, иначе false
      */
-    @Override
-    public boolean hasItemStack(PlayerInventory inventory, ItemStack stack) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(stack, "ItemStack cannot be null");
-        return inventory.contains(stack);
+    override fun hasItemStack(inventory: PlayerInventory?, stack: ItemStack?): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(stack, "ItemStack cannot be null")
+
+        return inventory!!.contains(stack)
+    }
+
+    override fun <T, Z> hasItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>, amount: Int): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(key, "NamespacedKey cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
+
+        val contents = inventory!!.contents
+        var amountStack = 0
+
+        for (item in contents) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+                amountStack += item.amount
+                if (amountStack >= amount) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    override fun <T, Z> hasItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>): Boolean {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(key, "NamespacedKey cannot be null")
+
+        val contents = inventory!!.contents
+
+        for (item in contents) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+                return true
+            }
+        }
+
+        return false
     }
 
     /**
@@ -101,21 +136,21 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param material Удаляемый материал
      * @param amount Количество удаляемого предмета
      */
-    @Override
-    public void removeMaterial(PlayerInventory inventory, Material material, int amount) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(material, "Material cannot be null");
-        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
+    override fun removeMaterial(inventory: PlayerInventory?, material: Material?, amount: Int) {
+        var amount = amount
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(material, "Material cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
 
-        for (ItemStack item : inventory.getContents()) {
-            if (isItemValid(item) && item.getType() == material) {
-                final int stackAmount = item.getAmount();
+        for (item in inventory!!.contents) {
+            if (isItemValid(item) && item!!.type == material) {
+                val stackAmount = item.amount
 
                 if (stackAmount >= amount) {
-                    item.setAmount(stackAmount - amount);
+                    item.amount = stackAmount - amount
                 } else {
-                    amount -= stackAmount;
-                    item.setAmount(0);
+                    amount -= stackAmount
+                    item.amount = 0
                 }
             }
         }
@@ -128,26 +163,57 @@ public class PlayerInventoryAPI implements InventoryModifier, InventoryChecker {
      * @param stack Удаляемый предмет
      * @param amount Количество удаляемого предмета
      */
-    @Override
-    public void removeItemStack(PlayerInventory inventory, ItemStack stack, int amount) {
-        Objects.requireNonNull(inventory, "Inventory cannot be null");
-        Objects.requireNonNull(stack, "ItemStack cannot be null");
-        if (amount <= 0) throw new IllegalArgumentException("Amount cannot be less than 0");
-        for (ItemStack item : inventory.getContents()) {
-            if (isItemValid(item) && item.isSimilar(stack)) {
-                final int stackAmount = item.getAmount();
+    override fun removeItemStack(inventory: PlayerInventory?, stack: ItemStack?, amount: Int) {
+        var amount = amount
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(stack, "ItemStack cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
+
+        for (item in inventory!!.contents) {
+            if (isItemValid(item) && item!!.isSimilar(stack)) {
+                val stackAmount = item.amount
 
                 if (stackAmount >= amount) {
-                    item.setAmount(stackAmount - amount);
+                    item.amount = stackAmount - amount
                 } else {
-                    amount -= stackAmount;
-                    item.setAmount(0);
+                    amount -= stackAmount
+                    item.amount = 0
                 }
             }
         }
     }
 
-    private static boolean isItemValid(ItemStack item) {
-        return item != null && !item.getType().isAir();
+    override fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>, amount: Int) {
+        var amount = amount
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(key, "NamespacedKey cannot be null")
+        Objects.requireNonNull(persistentDataType, "NamespacedKey cannot be null")
+        require(amount > 0) { "Amount cannot be less than 0" }
+
+        for (item in inventory!!.contents) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+                val stackAmount = item.amount
+
+                if (stackAmount >= amount) {
+                    item.amount = stackAmount - amount
+                } else {
+                    amount -= stackAmount
+                    item.amount = 0
+                }
+            }
+        }
+    }
+
+    override fun addSafeItemStack(player: Player, item: ItemStack?) {
+        Objects.requireNonNull(item, "ItemStack cannot be null")
+
+        player.inventory.addItem(item!!).forEach { slot: Int, itemStack: ItemStack -> player.world.dropItem(player.location, itemStack) }
+    }
+
+
+    companion object {
+        private fun isItemValid(item: ItemStack?): Boolean {
+            return item != null && !item.type.isAir
+        }
     }
 }
