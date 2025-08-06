@@ -204,6 +204,19 @@ class PlayerInventoryAPI : InventoryModifier, InventoryChecker {
         }
     }
 
+    override fun <T, Z> removeItemNamespacedKey(inventory: PlayerInventory?, key: NamespacedKey, persistentDataType: PersistentDataType<T, Z>) {
+        Objects.requireNonNull(inventory, "Inventory cannot be null")
+        Objects.requireNonNull(key, "NamespacedKey cannot be null")
+        Objects.requireNonNull(persistentDataType, "NamespacedKey cannot be null")
+
+        for (item in inventory!!.contents) {
+            if (isItemValid(item) && item!!.itemMeta != null && item.itemMeta.persistentDataContainer.has(key, persistentDataType)) {
+                inventory.remove(item)
+            }
+        }
+
+    }
+
     override fun addSafeItemStack(player: Player, item: ItemStack?) {
         Objects.requireNonNull(item, "ItemStack cannot be null")
 
